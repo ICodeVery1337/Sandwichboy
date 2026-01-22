@@ -31,6 +31,11 @@ class mainScene {
 
         this.load.image('background', 'assets/board.png');
 
+        this.load.audio("theme", "assets/sounds/JokingMotive.mp3" )
+
+        // this.load.audio("nice", "assets/sounds/Nice.mp3" )
+
+
     }
     create() {
         this.add.image(400, 600, 'background');
@@ -54,6 +59,11 @@ class mainScene {
         this.scoreText = this.add.text(20, 20, 'score: ' + this.score, style);
 
         this.arrow = this.input.keyboard.createCursorKeys();
+
+        const backgroundMusic = this.sound.add('theme');
+
+        backgroundMusic.loop = true; // Loop the music
+        backgroundMusic.play();
     }
     update() {
         // If the player is overlapping with the coin
