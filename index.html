@@ -1,16 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>My First Phaser Game</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.14.0/dist/phaser.min.js"></script>
+    <meta charset="UTF-8" />
+    <title>Sandwich Boy</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
     <script src="menu.js"></script>
     <script src="gamePlay.js"></script>
     <script src="game.js"></script>
+
+    <style>
+      body {
+        text-align: center;
+        background-color: #222;
+        color: white;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .game-logo {
+        display: block;
+        margin: 20px auto;
+        max-width: 300px;
+        height: auto;
+      }
+
+      #game canvas {
+        display: block;
+        margin: 0 auto;
+        border: 4px solid #fff;
+      }
+    </style>
   </head>
   <body>
-    <h1>My First Phaser Game</h1>
+    <img src="assets/title.png" alt="A tasty sandwich" width="450" />
     <div id="game"></div>
-    <p>Use the arrow keys to move around and collect the coins.</p>
   </body>
 </html>
