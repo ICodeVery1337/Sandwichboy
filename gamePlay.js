@@ -1,22 +1,63 @@
 const gameState = {};
+const enemies = [];
 
 class gamePlay extends Phaser.Scene {
   constructor() {
     super("gamePlay");
   }
 
-  hit() {
+  handlePlayerEnemyOverlap(player, enemy) {
+    enemy.x = Phaser.Math.Between(0, defaultResolution.width);
+    enemy.y = -300;
+
+    gameState.sfx.enemyHit.play();
+    player.setTint(0xff0000);
+    this.lives -= 1;
+    this.livesText.setText("Lives left: " + this.lives);
+  }
+
+  handlePlayerSandwichOverlap(player, sandwich) {
+    sandwich.x = Phaser.Math.Between(0, defaultResolution.width);
+    sandwich.y = -300;
+    sandwich.setGravityY(0);
+
+    this.score += 1;
+    this.scoreText.setText("Sandwiches eaten: " + this.score);
+    gameState.sfx.nice.play();
+    player.setTint(0x00ff00);
+  }
+
+  handleLowerBoundSandwichOverlap(bound, sandwich) {
+    sandwich.x = Phaser.Math.Between(0, defaultResolution.width);
+    sandwich.y = -300;
+    sandwich.setGravityY(0);
+  }
+
+  handleLowerBoundEnemyOverlap(bound, enemy) {
+    enemy.x = Phaser.Math.Between(0, defaultResolution.width);
+    enemy.y = -300;
+    enemy.setGravityY(0);
+  }
+
+  hitDeluxe() {
     this.sandwich1.x = Phaser.Math.Between(0, defaultResolution.width);
     this.sandwich1.y = Phaser.Math.Between(100, defaultResolution.height);
 
-    this.score += 1;
+    this.score += 5;
     this.scoreText.setText("Sandwiches eaten: " + this.score);
     gameState.sfx.nice.play();
   }
 
   enemyHit() {
     this.enemy.x = Phaser.Math.Between(0, defaultResolution.width);
-    this.enemy.y = Phaser.Math.Between(-50, -200);
+    this.enemy.y = -300;
+
+    gameState.sfx.enemyHit.play();
+  }
+
+  enemyHitBetter(enemy) {
+    enemy.x = Phaser.Math.Between(0, defaultResolution.width);
+    enemy.enemy.y = -300;
 
     gameState.sfx.enemyHit.play();
   }
@@ -46,6 +87,8 @@ class gamePlay extends Phaser.Scene {
   preload() {
     this.load.image("player", "assets/images/Shades.png");
     this.load.image("sandwich", "assets/images/Sandwich.png");
+    this.load.image("sandwichDeluxe", "assets/images/sandwichDeluxe.png");
+
     this.load.image("tesco", "assets/images/tesco.png");
     this.load.image("enemy", "assets/images/board.png");
 
@@ -68,39 +111,69 @@ class gamePlay extends Phaser.Scene {
 
     this.add.image(0, 0, "tesco").setOrigin(0, 0);
 
-    this.player = this.physics.add.sprite(100, 100, "player");
+    this.player = this.physics.add.sprite(512, 768, "player");
     this.player.body.setSize(180, 340);
     this.player.setScale(0.35);
     this.player.setCollideWorldBounds(true);
 
-    this.sandwich1 = this.physics.add.sprite(500, 500, "sandwich");
-    this.sandwich1.body.setSize(30, 40);
-    this.sandwich1.setScale(0.25);
+    this.sandwich1 = this.physics.add.sprite(500, 500, "sandwichDeluxe");
+    this.sandwich1.body.setSize(60, 80);
+    this.sandwich1.setScale(0.17);
 
-    this.sandwich2 = this.physics.add.sprite(600, 100, "sandwich");
-    this.sandwich2.body.setSize(30, 40);
-    this.sandwich2.setScale(0.25);
-    this.sandwich2.setGravityY(100);
-    // this.sandwich2.setCollideWorldBounds(true)
+    this.fallingSandwiches = this.add.group();
+    for (let i = 0; i < 4; i++) {
+      let sandwich = this.physics.add.sprite(100 + i * 100, -300, "sandwich");
+      sandwich.body.setSize(30, 40);
+      sandwich.setScale(0.25);
+      sandwich.setGravityY(100);
+      sandwich.name = "sandwich" + String(i);
 
-    this.enemy = this.physics.add.sprite(600, 100, "enemy");
-    this.enemy.setScale(0.25);
-    this.enemy.setGravityY(100);
+      this.fallingSandwiches.add(sandwich);
+    }
 
-    this.enemy2 = this.physics.add.sprite(600, 100, "enemy");
-    this.enemy2.angle = 45;
-    this.enemy2.setScale(0.25);
-    this.enemy2.setGravityY(100);
+    this.physics.add.overlap(
+      this.player,
+      this.fallingSandwiches,
+      this.handlePlayerSandwichOverlap,
+      null,
+      this,
+    );
+
+    this.enemies = this.add.group();
+    for (let i = 0; i < 5; i++) {
+      let enemy = this.physics.add.sprite(100 + i * 100, 100, "enemy");
+      enemy.body.setSize(140, 340);
+      enemy.setScale(0.2);
+      enemy.setGravityY(90);
+      enemy.name = "enemy" + String(i);
+
+      this.enemies.add(enemy);
+    }
+
+    this.physics.add.overlap(
+      this.player,
+      this.enemies,
+      this.handlePlayerEnemyOverlap,
+      null,
+      this,
+    );
 
     this.score = 0;
+    this.lives = 3;
+    this.timerCount = 0;
 
     let style = { font: "20px Arial", fill: "#fff" };
+
+    this.livesText = this.add.text(20, 20, "Lives left: " + this.lives, style);
+
     this.scoreText = this.add.text(
       20,
-      20,
+      45,
       "Sandwiches eaten: " + this.score,
       style,
     );
+
+    this.timerText = this.add.text(20, 70, "Time: 0", style);
 
     this.arrow = this.input.keyboard.createCursorKeys();
 
@@ -110,31 +183,40 @@ class gamePlay extends Phaser.Scene {
     backgroundMusic.setVolume(0.5);
     backgroundMusic.play();
 
-    this.sandwichBounds = this.physics.add.staticImage(0, 850, "invisibleBox");
-    this.sandwichBounds.setSize(2000, 100);
-    this.sandwichBounds.setVisible(false);
+    this.lowerBound = this.physics.add.staticImage(0, 1000, "invisibleBox");
+    this.lowerBound.setSize(4000, 100);
+    this.lowerBound.setVisible(false);
 
-    // this.physics.add.collider(this.sandwich2, this.sandwichBounds);
+    this.physics.add.overlap(
+      this.lowerBound,
+      this.enemies,
+      this.handleLowerBoundEnemyOverlap,
+      null,
+      this,
+    );
+
+    this.physics.add.overlap(
+      this.lowerBound,
+      this.fallingSandwiches,
+      this.handleLowerBoundSandwichOverlap,
+      null,
+      this,
+    );
   }
-  update() {
+  update(time, delta) {
+    this.timerCount += delta / 1000;
+
+    this.timerText.setText("Time: " + Math.floor(this.timerCount));
+
+    let minutes = Math.floor(this.timerCount / 60);
+    let seconds = Math.floor(this.timerCount % 60);
+
+    // Pad the seconds so it shows 01:05 instead of 1:5
+    let displaySeconds = seconds.toString().padStart(2, "0");
+    this.timerText.setText(`Time: ${minutes}:${displaySeconds}`);
+
     if (this.physics.overlap(this.player, this.sandwich1)) {
-      this.hit();
-    }
-
-    if (this.physics.overlap(this.sandwichBounds, this.sandwich2)) {
-      this.miss2();
-    }
-
-    if (this.physics.overlap(this.sandwichBounds, this.enemy)) {
-      this.enemyMiss();
-    }
-
-    if (this.physics.overlap(this.player, this.sandwich2)) {
-      this.hit2();
-    }
-
-    if (this.physics.overlap(this.player, this.enemy)) {
-      this.enemyHit();
+      this.hitDeluxe();
     }
 
     if (this.arrow.right.isDown) {
