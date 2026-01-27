@@ -1,9 +1,48 @@
 const gameState = {};
-const enemies = [];
+
+const scoreToWin = 100;
 
 class gamePlay extends Phaser.Scene {
   constructor() {
     super("gamePlay");
+  }
+
+  createExpandingRedCircle(x, y) {
+    const circle = this.add.graphics({ x: x, y: y });
+
+    circle.fillStyle(0xff0000, 1);
+
+    circle.fillCircle(0, 0, 10);
+
+    this.tweens.add({
+      targets: circle,
+      scale: 15,
+      alpha: 0,
+      duration: 800,
+      ease: "Expo.out",
+      onComplete: () => {
+        circle.destroy();
+      },
+    });
+  }
+
+  createExpandingGreenCircle(x, y, size) {
+    const circle = this.add.graphics({ x: x, y: y });
+
+    circle.fillStyle(0x00ff00, 1);
+
+    circle.fillCircle(0, 0, size);
+
+    this.tweens.add({
+      targets: circle,
+      scale: 15,
+      alpha: 0,
+      duration: 800,
+      ease: "Expo.out",
+      onComplete: () => {
+        circle.destroy();
+      },
+    });
   }
 
   handlePlayerEnemyOverlap(player, enemy) {
@@ -11,7 +50,18 @@ class gamePlay extends Phaser.Scene {
     enemy.y = -300;
 
     gameState.sfx.enemyHit.play();
-    player.setTint(0xff0000);
+
+    if (this.lives == 0) {
+      gameState.status = "defeat";
+
+      gameState.lives = this.lives;
+      gameState.score = this.score;
+      gameState.timerCount = this.timerCount;
+      gameState.backgroundMusic.stop();
+
+      this.scene.start("gameOver");
+    }
+
     this.lives -= 1;
     this.livesText.setText("Lives left: " + this.lives);
   }
@@ -23,8 +73,18 @@ class gamePlay extends Phaser.Scene {
 
     this.score += 1;
     this.scoreText.setText("Sandwiches eaten: " + this.score);
+
+    if (this.score >= scoreToWin) {
+      gameState.status = "victory";
+      gameState.lives = this.lives;
+      gameState.score = this.score;
+      gameState.timerCount = this.timerCount;
+      gameState.backgroundMusic.stop();
+
+      this.scene.start("gameOver");
+    }
+
     gameState.sfx.nice.play();
-    player.setTint(0x00ff00);
   }
 
   handleLowerBoundSandwichOverlap(bound, sandwich) {
@@ -45,43 +105,19 @@ class gamePlay extends Phaser.Scene {
 
     this.score += 5;
     this.scoreText.setText("Sandwiches eaten: " + this.score);
-    gameState.sfx.nice.play();
-  }
 
-  enemyHit() {
-    this.enemy.x = Phaser.Math.Between(0, defaultResolution.width);
-    this.enemy.y = -300;
+    if (this.score >= scoreToWin) {
+      gameState.status = "victory";
+      gameState.lives = this.lives;
+      gameState.score = this.score;
+      gameState.timerCount = this.timerCount;
 
-    gameState.sfx.enemyHit.play();
-  }
+      gameState.backgroundMusic.stop();
 
-  enemyHitBetter(enemy) {
-    enemy.x = Phaser.Math.Between(0, defaultResolution.width);
-    enemy.enemy.y = -300;
+      this.scene.start("gameOver");
+    }
 
-    gameState.sfx.enemyHit.play();
-  }
-
-  enemyMiss() {
-    this.enemy.x = Phaser.Math.Between(0, defaultResolution.width);
-    this.enemy.y = Phaser.Math.Between(100, 100);
-    this.enemy.setGravityY(0);
-  }
-
-  hit2() {
-    this.sandwich2.x = Phaser.Math.Between(0, defaultResolution.width);
-    this.sandwich2.y = Phaser.Math.Between(100, 100);
-    this.sandwich2.setGravityY(0);
-
-    this.score += 1;
-    this.scoreText.setText("Sandwiches eaten: " + this.score);
-    gameState.sfx.nice.play();
-  }
-
-  miss2() {
-    this.sandwich2.x = Phaser.Math.Between(0, defaultResolution.width);
-    this.sandwich2.y = Phaser.Math.Between(100, 100);
-    this.sandwich2.setGravityY(0);
+    gameState.sfx.enemyHitDeluxe.play();
   }
 
   preload() {
@@ -95,11 +131,17 @@ class gamePlay extends Phaser.Scene {
     this.load.audio("theme", "assets/sounds/JokingMotive.mp3");
     this.load.audio("nice", "assets/sounds/Nice.mp3");
     this.load.audio("enemyHit", "assets/sounds/EnemyHit.mp3");
+    this.load.audio("enemyDeluxeHit", "assets/sounds/wow.mp3");
   }
   create() {
+    this.cameras.main.fadeIn(2000, 0, 0, 0);
+
     gameState.sfx = {};
     gameState.sfx.nice = this.sound.add("nice");
-    gameState.sfx.enemyHit = this.sound.add("enemyHit").setVolume(0.6);
+    gameState.sfx.enemyHit = this.sound.add("enemyHit").setVolume(0.5);
+    gameState.sfx.enemyHitDeluxe = this.sound
+      .add("enemyDeluxeHit")
+      .setVolume(0.4);
 
     this.physics.world.setBounds(
       0,
@@ -107,7 +149,7 @@ class gamePlay extends Phaser.Scene {
       defaultResolution.width,
       defaultResolution.height,
     );
-    this.physics.world.createDebugGraphic();
+    // this.physics.world.createDebugGraphic();
 
     this.add.image(0, 0, "tesco").setOrigin(0, 0);
 
@@ -115,10 +157,12 @@ class gamePlay extends Phaser.Scene {
     this.player.body.setSize(180, 340);
     this.player.setScale(0.35);
     this.player.setCollideWorldBounds(true);
+    this.player.postFX.addGlow(0x0000ff, 2, 0);
 
     this.sandwich1 = this.physics.add.sprite(500, 500, "sandwichDeluxe");
     this.sandwich1.body.setSize(60, 80);
     this.sandwich1.setScale(0.17);
+    this.sandwich1.postFX.addGlow(0x00ff00, 2, 0);
 
     this.fallingSandwiches = this.add.group();
     for (let i = 0; i < 4; i++) {
@@ -146,6 +190,7 @@ class gamePlay extends Phaser.Scene {
       enemy.setScale(0.2);
       enemy.setGravityY(90);
       enemy.name = "enemy" + String(i);
+      enemy.postFX.addGlow(0xff0000, 2, 0);
 
       this.enemies.add(enemy);
     }
@@ -164,7 +209,7 @@ class gamePlay extends Phaser.Scene {
 
     let style = { font: "20px Arial", fill: "#fff" };
 
-    this.livesText = this.add.text(20, 20, "Lives left: " + this.lives, style);
+    this.livesText = this.add.text(20, 70, "Lives left: " + this.lives, style);
 
     this.scoreText = this.add.text(
       20,
@@ -173,15 +218,17 @@ class gamePlay extends Phaser.Scene {
       style,
     );
 
-    this.timerText = this.add.text(20, 70, "Time: 0", style);
+    this.timerText = this.add.text(20, 20, "Time: 0", style);
 
     this.arrow = this.input.keyboard.createCursorKeys();
 
     const backgroundMusic = this.sound.add("theme");
 
     backgroundMusic.loop = true;
-    backgroundMusic.setVolume(0.5);
+    backgroundMusic.setVolume(0.7);
     backgroundMusic.play();
+
+    gameState.backgroundMusic = backgroundMusic;
 
     this.lowerBound = this.physics.add.staticImage(0, 1000, "invisibleBox");
     this.lowerBound.setSize(4000, 100);
@@ -202,7 +249,38 @@ class gamePlay extends Phaser.Scene {
       null,
       this,
     );
+
+    this.physics.add.overlap(
+      this.player,
+      this.enemies,
+      (player, enemy) => {
+        this.createExpandingRedCircle(player.x, player.y);
+      },
+      null,
+      this,
+    );
+
+    this.physics.add.overlap(
+      this.player,
+      this.fallingSandwiches,
+      (player, sandwich) => {
+        this.createExpandingGreenCircle(player.x, player.y, 5);
+      },
+      null,
+      this,
+    );
+
+    this.physics.add.overlap(
+      this.player,
+      this.sandwich1,
+      (player, sandwich) => {
+        this.createExpandingGreenCircle(player.x, player.y, 10);
+      },
+      null,
+      this,
+    );
   }
+
   update(time, delta) {
     this.timerCount += delta / 1000;
 

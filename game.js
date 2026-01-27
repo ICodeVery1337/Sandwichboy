@@ -1,8 +1,8 @@
 const config = {
   width: defaultResolution.width,
   height: defaultResolution.height,
-  backgroundColor: "#3498db",
-  scene: [Menu, gamePlay],
+  backgroundColor: "#222",
+  scene: [Menu, gamePlay, gameOver],
   physics: { default: "arcade" },
 };
 
