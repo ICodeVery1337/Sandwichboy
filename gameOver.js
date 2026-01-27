@@ -1,3 +1,5 @@
+const accessBackgroundMusic = {};
+
 class gameOver extends Phaser.Scene {
   constructor() {
     super("gameOver");
@@ -25,6 +27,8 @@ class gameOver extends Phaser.Scene {
 
       backgroundMusic.setVolume(1);
       backgroundMusic.play();
+
+      accessBackgroundMusic.music = backgroundMusic;
     } else {
       this.add.image(40, 0, "victory").setOrigin(0, 0);
 
@@ -32,6 +36,8 @@ class gameOver extends Phaser.Scene {
 
       backgroundMusic.setVolume(1);
       backgroundMusic.play();
+
+      accessBackgroundMusic.music = backgroundMusic;
     }
     const playButton = this.add
       .sprite(330, 20, "playAgainText")
@@ -40,6 +46,7 @@ class gameOver extends Phaser.Scene {
       .setInteractive();
 
     playButton.on("pointerdown", () => {
+      accessBackgroundMusic.music.stop();
       this.scene.start("gamePlay");
     });
 

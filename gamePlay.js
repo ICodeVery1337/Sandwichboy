@@ -149,7 +149,7 @@ class gamePlay extends Phaser.Scene {
       defaultResolution.width,
       defaultResolution.height,
     );
-    // this.physics.world.createDebugGraphic();
+    this.physics.world.createDebugGraphic();
 
     this.add.image(0, 0, "tesco").setOrigin(0, 0);
 
@@ -160,7 +160,7 @@ class gamePlay extends Phaser.Scene {
     this.player.postFX.addGlow(0x0000ff, 2, 0);
 
     this.sandwich1 = this.physics.add.sprite(500, 500, "sandwichDeluxe");
-    this.sandwich1.body.setSize(60, 80);
+    this.sandwich1.body.setSize(220, 300);
     this.sandwich1.setScale(0.17);
     this.sandwich1.postFX.addGlow(0x00ff00, 2, 0);
 
