@@ -14,7 +14,7 @@ class gameOver extends Phaser.Scene {
     this.load.image("victoryText", "assets/images/victoryText.png");
     this.load.image("victory", "assets/images/victory.png");
 
-    this.load.audio("win", "assets/sounds/win.mp3");
+    this.load.audio("win", "assets/sounds/yeah.mp3");
     this.load.audio("fine", "assets/sounds/fine.mp3");
   }
 
@@ -34,7 +34,7 @@ class gameOver extends Phaser.Scene {
 
       const backgroundMusic = this.sound.add("win");
 
-      backgroundMusic.setVolume(1);
+      backgroundMusic.setVolume(0.8);
       backgroundMusic.play();
 
       accessBackgroundMusic.music = backgroundMusic;
@@ -52,20 +52,24 @@ class gameOver extends Phaser.Scene {
 
     let style = { font: "20px Arial", fill: "#fff" };
 
-    this.livesText = this.add.text(
-      defaultResolution.width / 2 - 150,
-      defaultResolution.height - 100,
-      "Lives left: " + gameState.lives,
-      style,
-    );
+    this.livesText = this.add
+      .text(
+        defaultResolution.widthHalf,
+        defaultResolution.height - 100,
+        "Lives left: " + gameState.lives,
+        style,
+      )
+      .setOrigin(0.5);
     this.livesText.setStroke("#000000", 6);
 
-    this.scoreText = this.add.text(
-      defaultResolution.width / 2 - 150,
-      defaultResolution.height - 125,
-      "Sandwiches eaten: " + gameState.score,
-      style,
-    );
+    this.scoreText = this.add
+      .text(
+        defaultResolution.widthHalf,
+        defaultResolution.height - 125,
+        "Sandwiches eaten: " + gameState.score,
+        style,
+      )
+      .setOrigin(0.5);
     this.scoreText.setStroke("#000000", 6);
 
     let minutes = Math.floor(gameState.timerCount / 60);
@@ -73,12 +77,14 @@ class gameOver extends Phaser.Scene {
 
     let displaySeconds = seconds.toString().padStart(2, "0");
 
-    this.timerText = this.add.text(
-      defaultResolution.width / 2 - 150,
-      defaultResolution.height - 150,
-      `Time: ${minutes}:${displaySeconds}`,
-      style,
-    );
+    this.timerText = this.add
+      .text(
+        defaultResolution.widthHalf,
+        defaultResolution.height - 150,
+        `Time: ${minutes}:${displaySeconds}`,
+        style,
+      )
+      .setOrigin(0.5);
     this.timerText.setStroke("#000000", 6);
 
     this.tweens.add({

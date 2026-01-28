@@ -23,6 +23,42 @@ class Menu extends Phaser.Scene {
 
   create() {
     this.add.image(0, -50, "menuBackground").setOrigin(0, 0);
+    this.MusicText1 = this.add
+      .text(defaultResolution.widthHalf, 670, "Music & Meme Sounds:")
+      .setOrigin(0.5);
+    this.MusicText1.setStroke("#000000", 6);
+
+    this.MusicText2 = this.add
+      .text(
+        defaultResolution.widthHalf,
+        690,
+        "Tateyuki Shigaraki - Joking Motive",
+      )
+      .setOrigin(0.5);
+    this.MusicText2.setStroke("#000000", 6);
+
+    this.MusicText3 = this.add
+      .text(defaultResolution.widthHalf, 710, "Bag Raiders - Shooting Stars")
+      .setOrigin(0.5);
+    this.MusicText3.setStroke("#000000", 6);
+
+    this.MusicText4 = this.add
+      .text(
+        defaultResolution.widthHalf,
+        730,
+        "My Longest Yeah Boy Ever, Fahh, Anime 'Wow' Sound Effect",
+      )
+      .setOrigin(0.5);
+    this.MusicText4.setStroke("#000000", 6);
+
+    this.MusicText4 = this.add
+      .text(
+        defaultResolution.widthHalf,
+        750,
+        "You Just Have to Say That You're Fine, Michael Rosen - Nice",
+      )
+      .setOrigin(0.5);
+    this.MusicText4.setStroke("#000000", 6);
 
     this.instructionsText1 = this.add
       .text(defaultResolution.widthHalf, 20, "Instructions:")

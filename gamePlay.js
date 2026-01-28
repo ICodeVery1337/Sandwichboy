@@ -1,6 +1,6 @@
 const gameState = {};
 
-const scoreToWin = 10;
+const scoreToWin = 100;
 
 class gamePlay extends Phaser.Scene {
   constructor() {
@@ -27,6 +27,25 @@ class gamePlay extends Phaser.Scene {
   }
 
   createExpandingGreenCircle(x, y, size) {
+    const circle = this.add.graphics({ x: x, y: y });
+
+    circle.fillStyle(0x00ff00, 1);
+
+    circle.fillCircle(0, 0, size);
+
+    this.tweens.add({
+      targets: circle,
+      scale: 15,
+      alpha: 0,
+      duration: 800,
+      ease: "Expo.out",
+      onComplete: () => {
+        circle.destroy();
+      },
+    });
+  }
+
+  createExpandingOtherCircle(x, y, size) {
     const circle = this.add.graphics({ x: x, y: y });
 
     circle.fillStyle(0x00ff00, 1);
@@ -90,7 +109,11 @@ class gamePlay extends Phaser.Scene {
   handleLowerBoundSandwichOverlap(bound, sandwich) {
     sandwich.x = Phaser.Math.Between(0, defaultResolution.width);
     sandwich.y = -300;
+
+    // let randGravitySandwich = Phaser.Math.Between(70, 110);
+
     sandwich.setGravityY(0);
+    // sandwich.setGravityY(randGravitySandwich);
   }
 
   handleLowerBoundEnemyOverlap(bound, enemy) {
@@ -101,7 +124,9 @@ class gamePlay extends Phaser.Scene {
 
   hitDeluxe() {
     this.sandwich1.x = Phaser.Math.Between(0, defaultResolution.width);
-    this.sandwich1.y = Phaser.Math.Between(100, defaultResolution.height);
+    this.sandwich1.y = Phaser.Math.Between(0, defaultResolution.heightHalf);
+
+    this.createExpandingOtherCircle(this.sandwich1.x, this.sandwich1.y, 10);
 
     this.score += 5;
     this.scoreText.setText("Sandwiches eaten: " + this.score);
@@ -149,7 +174,7 @@ class gamePlay extends Phaser.Scene {
       defaultResolution.width,
       defaultResolution.height,
     );
-    this.physics.world.createDebugGraphic();
+    // this.physics.world.createDebugGraphic();
 
     this.add.image(0, 0, "tesco").setOrigin(0, 0);
 
@@ -159,20 +184,41 @@ class gamePlay extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
     this.player.postFX.addGlow(0x0000ff, 2, 0);
 
-    this.sandwich1 = this.physics.add.sprite(500, 500, "sandwichDeluxe");
+    let sandwich1X = Phaser.Math.Between(0, defaultResolution.width);
+    let sandwich1Y = Phaser.Math.Between(0, defaultResolution.heightHalf);
+
+    this.sandwich1 = this.physics.add.sprite(
+      sandwich1X,
+      sandwich1Y,
+      "sandwichDeluxe",
+    );
     this.sandwich1.body.setSize(220, 300);
     this.sandwich1.setScale(0.17);
     this.sandwich1.postFX.addGlow(0x00ff00, 2, 0);
 
     this.fallingSandwiches = this.add.group();
+    let randomXPosSandwich = Phaser.Math.Between(0, defaultResolution.width);
+    let randGravitySandwich = Phaser.Math.Between(-30, 30);
+
     for (let i = 0; i < 4; i++) {
-      let sandwich = this.physics.add.sprite(100 + i * 100, -300, "sandwich");
+      // let sandwich = this.physics.add.sprite(100 + i * 100, -300, "sandwich");
+      let sandwich = this.physics.add.sprite(
+        randomXPosSandwich,
+        -300,
+        "sandwich",
+      );
+
       sandwich.body.setSize(30, 40);
       sandwich.setScale(0.25);
-      sandwich.setGravityY(100);
+      sandwich.setGravityY(100 + randGravitySandwich);
+      sandwich.postFX.addGlow(0xffff00, 2, 0);
+
       sandwich.name = "sandwich" + String(i);
 
       this.fallingSandwiches.add(sandwich);
+
+      randomXPosSandwich = Phaser.Math.Between(0, defaultResolution.width);
+      randGravitySandwich = Phaser.Math.Between(-30, 30);
     }
 
     this.physics.add.overlap(
@@ -184,15 +230,26 @@ class gamePlay extends Phaser.Scene {
     );
 
     this.enemies = this.add.group();
+    let randomXPosEnemy = Phaser.Math.Between(0, defaultResolution.width);
+
+    let randGravityEnemy = Phaser.Math.Between(-30, 30);
+
     for (let i = 0; i < 5; i++) {
-      let enemy = this.physics.add.sprite(100 + i * 100, 100, "enemy");
+      // let enemy = this.physics.add.sprite(100 + i * 100, 100, "enemy");
+      let enemy = this.physics.add.sprite(randomXPosEnemy, -300, "enemy");
+
       enemy.body.setSize(140, 340);
       enemy.setScale(0.2);
-      enemy.setGravityY(90);
+      // enemy.setGravityY(90);
+
+      enemy.setGravityY(90 + randGravityEnemy);
+
       enemy.name = "enemy" + String(i);
       enemy.postFX.addGlow(0xff0000, 2, 0);
 
       this.enemies.add(enemy);
+      randomXPosEnemy = Phaser.Math.Between(0, defaultResolution.width);
+      randGravityEnemy = Phaser.Math.Between(-30, 30);
     }
 
     this.physics.add.overlap(
@@ -273,15 +330,15 @@ class gamePlay extends Phaser.Scene {
       this,
     );
 
-    this.physics.add.overlap(
-      this.player,
-      this.sandwich1,
-      (player, sandwich) => {
-        this.createExpandingGreenCircle(player.x, player.y, 10);
-      },
-      null,
-      this,
-    );
+    // this.physics.add.overlap(
+    //   this.player,
+    //   this.sandwich1,
+    //   (player, sandwich) => {
+    //     this.createExpandingGreenCircle(player.x, player.y, 10);
+    //   },
+    //   null,
+    //   this,
+    // );
   }
 
   update(time, delta) {
