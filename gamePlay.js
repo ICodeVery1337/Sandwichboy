@@ -1,6 +1,6 @@
 const gameState = {};
 
-const scoreToWin = 100;
+const scoreToWin = 10;
 
 class gamePlay extends Phaser.Scene {
   constructor() {
@@ -210,6 +210,7 @@ class gamePlay extends Phaser.Scene {
     let style = { font: "20px Arial", fill: "#fff" };
 
     this.livesText = this.add.text(20, 70, "Lives left: " + this.lives, style);
+    this.livesText.setStroke("#000000", 6);
 
     this.scoreText = this.add.text(
       20,
@@ -217,8 +218,10 @@ class gamePlay extends Phaser.Scene {
       "Sandwiches eaten: " + this.score,
       style,
     );
+    this.scoreText.setStroke("#000000", 6);
 
     this.timerText = this.add.text(20, 20, "Time: 0", style);
+    this.timerText.setStroke("#000000", 6);
 
     this.arrow = this.input.keyboard.createCursorKeys();
 

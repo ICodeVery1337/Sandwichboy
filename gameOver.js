@@ -40,9 +40,9 @@ class gameOver extends Phaser.Scene {
       accessBackgroundMusic.music = backgroundMusic;
     }
     const playButton = this.add
-      .sprite(330, 20, "playAgainText")
-      .setScale(0.5)
-      .setOrigin(0, 0)
+      .sprite(defaultResolution.widthHalf, 80, "playAgainText")
+      .setScale(0.3)
+      .setOrigin(0.5)
       .setInteractive();
 
     playButton.on("pointerdown", () => {
@@ -58,6 +58,7 @@ class gameOver extends Phaser.Scene {
       "Lives left: " + gameState.lives,
       style,
     );
+    this.livesText.setStroke("#000000", 6);
 
     this.scoreText = this.add.text(
       defaultResolution.width / 2 - 150,
@@ -65,6 +66,7 @@ class gameOver extends Phaser.Scene {
       "Sandwiches eaten: " + gameState.score,
       style,
     );
+    this.scoreText.setStroke("#000000", 6);
 
     let minutes = Math.floor(gameState.timerCount / 60);
     let seconds = Math.floor(gameState.timerCount % 60);
@@ -77,5 +79,16 @@ class gameOver extends Phaser.Scene {
       `Time: ${minutes}:${displaySeconds}`,
       style,
     );
+    this.timerText.setStroke("#000000", 6);
+
+    this.tweens.add({
+      targets: playButton,
+      scaleX: 0.5,
+      scaleY: 0.5,
+      duration: 1000,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
   }
 }
