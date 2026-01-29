@@ -128,7 +128,7 @@ class gamePlay extends Phaser.Scene {
 
     this.createExpandingOtherCircle(this.sandwich1.x, this.sandwich1.y, 10);
 
-    this.score += 5;
+    this.score += 3;
     this.scoreText.setText("Sandwiches eaten: " + this.score);
 
     if (this.score >= scoreToWin) {
@@ -166,7 +166,7 @@ class gamePlay extends Phaser.Scene {
     gameState.sfx.enemyHit = this.sound.add("enemyHit").setVolume(0.5);
     gameState.sfx.enemyHitDeluxe = this.sound
       .add("enemyDeluxeHit")
-      .setVolume(0.4);
+      .setVolume(0.15);
 
     this.physics.world.setBounds(
       0,

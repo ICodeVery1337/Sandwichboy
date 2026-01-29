@@ -34,7 +34,7 @@ class gameOver extends Phaser.Scene {
 
       const backgroundMusic = this.sound.add("win");
 
-      backgroundMusic.setVolume(0.8);
+      backgroundMusic.setVolume(0.6);
       backgroundMusic.play();
 
       accessBackgroundMusic.music = backgroundMusic;
@@ -86,6 +86,33 @@ class gameOver extends Phaser.Scene {
       )
       .setOrigin(0.5);
     this.timerText.setStroke("#000000", 6);
+
+    let finalScore = 0;
+    if (seconds <= 180) {
+      finalScore = seconds * -3 + gameState.score * 2 + gameState.lives * 100;
+    } else {
+      finalScore = seconds * -5 + gameState.score * 2 + gameState.lives * 100;
+    }
+
+    this.finalScoreText = this.add
+      .text(
+        defaultResolution.widthHalf,
+        defaultResolution.height - 230,
+        "Final Score",
+        { font: "40px Arial", fill: "#fff" },
+      )
+      .setOrigin(0.5);
+    this.finalScoreText.setStroke("#000000", 6);
+
+    this.finalScoreText = this.add
+      .text(
+        defaultResolution.widthHalf,
+        defaultResolution.height - 190,
+        finalScore,
+        { font: "40px Arial", fill: "#fff" },
+      )
+      .setOrigin(0.5);
+    this.finalScoreText.setStroke("#000000", 6);
 
     this.tweens.add({
       targets: playButton,

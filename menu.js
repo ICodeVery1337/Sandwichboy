@@ -93,7 +93,7 @@ class Menu extends Phaser.Scene {
     this.score1Text.setStroke("#000000", 6);
 
     this.score5Text = this.add
-      .text(defaultResolution.widthHalf + 350, 325, "+5 score")
+      .text(defaultResolution.widthHalf + 350, 325, "+3 score")
       .setOrigin(0.5);
     this.score5Text.setStroke("#000000", 6);
 

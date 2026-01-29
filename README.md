@@ -2,10 +2,12 @@
 
 A game representing my life of the past 3 or so years. I will not be expanding on this statement.
 
+Navigate to https://icodevery1337.github.io/Sandwichboy/ to play it online. Desktop only as you need the arrow keys to move!
 
-Navigate to https://icodevery1337.github.io/Sandwichboy/ to play it online.
+Initially I was focused on good programming practices, but I let go of that dream to rather get this finished 🙂
 
 ## Running locally
+
 Make sure you have python installed.
 
 ```console
@@ -14,7 +16,7 @@ cd Sandwichboy
 python -m http.server 8888
 ```
 
-And then navigate to http://localhost:8888/ 
+And then navigate to http://localhost:8888/
 
 ## Music
 
@@ -26,6 +28,7 @@ The music used is:
 - Bag Raiders - Shooting Stars
 
 Memes used:
+
 - My Longest Yeah Boy Ever
 - Fahh
 - Anime 'Wow' Sound Effect
@@ -33,14 +36,17 @@ Memes used:
 - Michael Rosen - Nice
 
 # Prettier
+
 Used to format my terrible Javascript code:
 
 ## Install
+
 ```console
 npm install --save-dev --save-exact prettier
 ```
 
 ## Use
+
 ```console
 npx prettier . --write
 ```
