@@ -60,6 +60,11 @@ class Menu extends Phaser.Scene {
       .setOrigin(0.5);
     this.MusicText4.setStroke("#000000", 6);
 
+    this.howToWinText = this.add
+      .text(defaultResolution.widthHalf, 70, "Get 100 score to win!")
+      .setOrigin(0.5);
+    this.howToWinText.setStroke("#000000", 6);
+
     this.instructionsText1 = this.add
       .text(defaultResolution.widthHalf, 20, "Instructions:")
       .setOrigin(0.5);
@@ -69,7 +74,7 @@ class Menu extends Phaser.Scene {
       .setOrigin(0.5);
     this.instructionsText2.setStroke("#000000", 6);
     this.instructionsText3 = this.add
-      .text(defaultResolution.widthHalf, 70, "Click to start below")
+      .text(defaultResolution.widthHalf, 105, "Click to start below")
       .setOrigin(0.5);
     this.instructionsText3.setStroke("#000000", 6);
 
